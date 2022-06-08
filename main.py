@@ -22,6 +22,7 @@ class Tank:
         self.rect = pygame.Rect(position_x, position_y, TILE, TILE)
         self.direction = direction
         self.move_speed = 2
+        self.hp = 3
 
         self.shoot_timer = 0
         self.shoot_delay = 30
@@ -65,6 +66,12 @@ class Tank:
 
         pygame.draw.line(window, 'white', self.rect.center, (x, y), 4)
 
+    def damage(self, value):
+        self.hp -= value
+        if self.hp <= 0:
+            objects.remove(self)
+            print(self.color, "dead")
+
 
 class Bullet:
     def __init__(self, parent, position_x, position_y, direction_x, direction_y, damage):
@@ -85,6 +92,9 @@ class Bullet:
         else:
             for obj in objects:
                 if obj != self.parent and obj.rect.collidepoint(self.postion_x, self.postion_y):
+                    obj.damage(self.damage)
+                    bullets.remove(self)
+                    break
 
 
     def draw(self):
