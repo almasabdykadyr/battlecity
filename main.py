@@ -101,6 +101,19 @@ class Bullet:
         pygame.draw.circle(window, 'yellow', (self.postion_x, self.postion_y), 2)
 
 
+class Block:
+    def __init__(self, position_x, position_y, size):
+        
+
+    def init(self):
+        pass
+
+    def update(self):
+        pass
+    
+    def damage(self, value):
+        pass
+
 objects = []
 bullets = []
 
