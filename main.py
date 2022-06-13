@@ -63,7 +63,7 @@ class Tank:
         pygame.draw.rect(window, self.color, self.rect)
 
         x = self.rect.centerx + DIRECTS[self.direction][0] * 30
-        y = self.rect.centery + DIRECTS[self.disizerection][1] * 30
+        y = self.rect.centery + DIRECTS[self.direction][1] * 30
 
         pygame.draw.line(window, 'white', self.rect.center, (x, y), 4)
 
@@ -128,10 +128,20 @@ bullets = []
 Tank('blue', 200, 275, 0, [pygame.K_a, pygame.K_w, pygame.K_d, pygame.K_s, pygame.K_SPACE])
 Tank('red', 500, 275, 0, [pygame.K_LEFT, pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_KP_ENTER])
 
-for _ in range(10):
+for _ in range(50):
     while True:
-        x = randint(0, WIDTH//TILE)
-        y = randint(0, HEIGHT//TILE)
+        x = randint(0, (WIDTH//TILE - 1) * TILE)
+        y = randint(0, (HEIGHT//TILE - 1) * TILE)
+        rect = pygame.Rect(x, y, TILE, TILE)
+        fined = False
+        for obj in objects:
+            if rect.colliderect(obj.rect):
+                fined = True
+
+        if not fined:
+            break
+    
+    Block(x, y, TILE)
 
 is_playing = True
 while is_playing:
