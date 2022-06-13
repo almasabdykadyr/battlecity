@@ -4,7 +4,7 @@ from random import randint
 pygame.init()
 
 WIDTH, HEIGHT = 800, 600
-TILE = 50
+TILE = 32
 FPS = 60
 clock = pygame.time.Clock()
 
@@ -38,6 +38,8 @@ class Tank:
         self.key_shoot = key_list[4]
 
     def update(self):
+        old_position_x, old_position_y = self.rect.topleft
+
         if keys[self.key_left]:
             self.rect.x -= self.move_speed
             self.direction = 0
@@ -50,6 +52,11 @@ class Tank:
         elif keys[self.key_down]:
             self.rect.y += self.move_speed
             self.direction = 3
+
+        for obj in objects:
+            if obj != self and (self.rect.colliderect(obj.rect) or (self.rect.x < 0 or self.rect.x > WIDTH or self.rect.y < 0 or self.rect.y > HEIGHT)):
+                self.rect.topleft = old_position_x, old_position_y
+
         if keys[self.key_shoot] and self.shoot_timer == 0:
             direction_x = DIRECTS[self.direction][0] * self.bullet_speed
             direction_y = DIRECTS[self.direction][1] * self.bullet_speed
