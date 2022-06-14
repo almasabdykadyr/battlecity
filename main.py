@@ -15,6 +15,23 @@ pygame.display.set_caption('Battle city')
 DIRECTS = [[-1, 0], [0, -1], [1, 0], [0, 1]]
 
 fontUI = pygame.font.Font(None, 30)
+img_brick = pygame.image.load("images/block_brick.png")
+img_tanks = [
+    pygame.image.load("images/tank1.png"),
+    pygame.image.load("images/tank2.png"),
+    pygame.image.load("images/tank3.png"),
+    pygame.image.load("images/tank4.png"),
+    pygame.image.load("images/tank5.png"),
+    pygame.image.load("images/tank6.png"),
+    pygame.image.load("images/tank7.png"),
+    pygame.image.load("images/tank8.png")
+]
+
+img_bangs = [
+    pygame.image.load("images/bang1.png"),
+    pygame.image.load("images/bang2.png"),
+    pygame.image.load("images/bang3.png")
+]
 class UI:
     def __init__(self):
         pass
@@ -55,7 +72,15 @@ class Tank:
         self.key_down = key_list[3]
         self.key_shoot = key_list[4]
 
+        self.rank = 0
+        self.image = pygame.transform.rotate(img_tanks[self.rank], -self.direction* 90 + 90)
+        self.rect = self.image.get_rect(center = self.rect.center)
+
     def update(self):
+        self.image = pygame.transform.rotate(img_tanks[self.rank], -self.direction * 90 + 90)
+        self.image = pygame.transform.scale(self.image, (self.image.get_width() - 3, self.image.get_height() - 3))
+        self.rect = self.image.get_rect(center = self.rect.center)
+
         old_position_x, old_position_y = self.rect.topleft
 
         if keys[self.key_left]:
@@ -85,12 +110,8 @@ class Tank:
             self.shoot_timer -= 1
 
     def draw(self):
-        pygame.draw.rect(window, self.color, self.rect)
-
-        x = self.rect.centerx + DIRECTS[self.direction][0] * 30
-        y = self.rect.centery + DIRECTS[self.direction][1] * 30
-
-        pygame.draw.line(window, 'white', self.rect.center, (x, y), 4)
+        # pygame.draw.rect(window, self.color, self.rect)d
+        window.blit(self.image, self.rect)
 
     def damage(self, value):
         self.hp -= value
@@ -139,8 +160,9 @@ class Block:
         pass
     
     def draw(self):
-        pygame.draw.rect(window, 'green', self.rect)
-        pygame.draw.rect(window, 'gray20', self.rect, 2)
+        window.blit(img_brick, self.rect)
+        # pygame.draw.rect(window, 'green', self.rect)
+        # pygame.draw.rect(window, 'gray20', self.rect, 2)
 
     def damage(self, value):
         self.hp -= value
@@ -150,15 +172,15 @@ class Block:
 objects = []
 bullets = []
 
-Tank('blue', 200, 275, 0, [pygame.K_a, pygame.K_w, pygame.K_d, pygame.K_s, pygame.K_SPACE])
-Tank('red', 500, 275, 0, [pygame.K_LEFT, pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_KP_0])
-
+Tank(color='blue', position_x=200, position_y=275, direction=0, key_list=[pygame.K_a, pygame.K_w, pygame.K_d, pygame.K_s, pygame.K_SPACE])
+Tank(color='red', position_x=500, position_y=275, direction=0, key_list = [pygame.K_LEFT, pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_KP_0])
 ui = UI()
 
 for _ in range(50):
     while True:
         x = randint(0, (WIDTH//TILE - 1) * TILE)
-        y = randint(1, (HEIGHT//TILE - 1) * TILE)
+        y = randint(TILE, (HEIGHT//TILE - 1) * TILE)
+
         rect = pygame.Rect(x, y, TILE, TILE)
         fined = False
         for obj in objects:
