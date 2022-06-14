@@ -61,7 +61,7 @@ class Tank:
         self.hp = 3
 
         self.shoot_timer = 0
-        self.shoot_delay = 20
+        self.shoot_delay = 30
 
         self.bullet_speed = 5
         self.bullet_damage = 1
@@ -97,7 +97,7 @@ class Tank:
             self.direction = 3
 
         for obj in objects:
-            if obj != self and (self.rect.colliderect(obj.rect) or (self.rect.x < 0 or self.rect.x > WIDTH or self.rect.y < 0 or self.rect.y > HEIGHT)):
+            if obj != self and obj.type == 'block' and (self.rect.colliderect(obj.rect) or (self.rect.x < 0 or self.rect.x > WIDTH or self.rect.y < 0 or self.rect.y > HEIGHT)):
                 self.rect.topleft = old_position_x, old_position_y
 
         if keys[self.key_shoot] and self.shoot_timer == 0:
@@ -138,15 +138,32 @@ class Bullet:
             bullets.remove(self)
         else:
             for obj in objects:
-                if obj != self.parent and obj.rect.collidepoint(self.postion_x, self.postion_y):
+                if obj != self.parent and obj.type != 'bang' and obj.rect.collidepoint(self.postion_x, self.postion_y):
                     obj.damage(self.damage)
                     bullets.remove(self)
+                    Bang(self.postion_x, self.postion_y)
                     break
 
 
     def draw(self):
         pygame.draw.circle(window, 'yellow', (self.postion_x, self.postion_y), 2)
 
+class Bang:
+    def __init__(self, postion_x, position_y):
+        objects.append(self)
+        self.type = 'bang'
+
+        self.position_x, self.position_y = postion_x, position_y
+        self.frame = 0
+
+    def update(self):
+        self.frame += .1
+        if self.frame >= 3: objects.remove(self)
+
+    def draw(self):
+        image = img_bangs[int(self.frame)]
+        rect = image.get_rect(center = (self.position_x, self.position_y))
+        window.blit(image, rect)
 
 class Block:
     def __init__(self, position_x, position_y, size):
